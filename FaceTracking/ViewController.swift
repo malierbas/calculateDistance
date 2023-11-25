@@ -32,7 +32,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         captureSession = AVCaptureSession()
         captureSession?.sessionPreset = .photo
         
-        guard let camera = AVCaptureDevice.default(for: .video),
+        guard let camera = getFrontCamera(),
               let cameraInput = try? AVCaptureDeviceInput(device: camera),
               captureSession?.canAddInput(cameraInput) == true else {
             fatalError("Kamera erişimi sağlanamıyor.")
@@ -165,6 +165,24 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         let size = previewLayer!.bounds.size
         let rect = VNImageRectForNormalizedRect(boundingBox, Int(size.width), Int(size.height))
         return rect
+    }
+    
+    
+    func getFrontCamera() -> AVCaptureDevice?{
+        let videoDevices = AVCaptureDevice.devices(for: AVMediaType.video)
+
+
+        for device in videoDevices{
+            let device = device as! AVCaptureDevice
+            if device.position == AVCaptureDevice.Position.front {
+                return device
+            }
+        }
+        return nil
+    }
+
+    func getBackCamera() -> AVCaptureDevice{
+        return AVCaptureDevice.default(for: .video)!
     }
 }
     
